@@ -5,29 +5,36 @@ import (
 	"time"
 )
 
-func sender(ch chan int, cap int) {
-	for i := 1; i <= cap; i++ { // sending channel in loop
-		ch <- i
-	}
+func sender(ch chan int) {
+
+	go func() {
+		for i := 1; i <= 5; i++ { // sending channel in loop
+			ch <- i
+		}
+	}()
+
 }
 
 func receiver(ch chan int) {
-	for num := range ch {
-		fmt.Println("receiving channel", num)
-	}
+
+	go func() {
+		for num := range ch {
+			fmt.Println("receiving channel", num)
+		}
+	}()
+
 }
 
 func main() {
 
-	cap := 3
+	ch := make(chan int, 5) // buffered channel
 
-	ch := make(chan int, cap) // Buffered channel
-
-	go sender(ch, cap)
+	go sender(ch)
 	go receiver(ch)
 
-	time.Sleep(1000 * time.Millisecond)
+	time.Sleep(5 * time.Second)
 
 	fmt.Println("end of main")
 
 }
+
